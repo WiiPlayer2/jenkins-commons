@@ -1,4 +1,3 @@
-
 class Project
 {
     String ImageName;
@@ -30,6 +29,8 @@ class Project
     }
 }
 
-
+Project createProject(values) {
+    return new Project(values);
+}
 
 return this;
