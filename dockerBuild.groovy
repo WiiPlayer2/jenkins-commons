@@ -1,36 +1,14 @@
-class Project
+def build(config)
 {
-    String ImageName;
-    String Tag;
-    String Dockerfile;
-    String Registry;
-    String RegistryCredentials;
-
-    Project(values)
-    {
-        this.ImageName = values.imageName;
-        this.Tag = values.tag;
-        this.Dockerfile = values.dockerfile;
-        this.Registry = values.registry;
-        this.RegistryCredentials = values.registryCredentials;
-    }
-
-    def build()
-    {
-        sh "docker build -t $Registry/$ImageName:$Tag -f $Dockerfile ."
-    }
-
-    def publish()
-    {
-        withDockerRegistry([credentialsId: RegistryCredentials, url: "https://$Registry/"])
-        {
-            sh "docker image push $Registry/$ImageName:$Tag"
-        }
-    }
+    sh "docker build -t ${config.registry}/${config.imageName}:${config.tag} -f ${config.dockerfile} ."
 }
 
-Project createProject(values) {
-    return new Project(values);
+def publish(config)
+{
+    withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
+    {
+        sh "docker image push ${config.registry}/${config.imageName}:${config.tag}"
+    }
 }
 
 return this;
