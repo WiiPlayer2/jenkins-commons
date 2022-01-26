@@ -1,9 +1,9 @@
-def build(config)
+public def build(config)
 {
     sh "docker build -t ${config.registry}/${config.imageName}:${config.tag} -f ${config.dockerfile} ."
 }
 
-def publish(config)
+public def publish(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
