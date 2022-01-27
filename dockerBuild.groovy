@@ -86,6 +86,8 @@ def prepare(config)
     }
 
     config.fullTag = "${config.registry}/${config.imageName}:${config.tag}";
+
+    return config;
 }
 
 def buildAndPublish(config)
