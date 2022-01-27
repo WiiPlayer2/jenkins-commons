@@ -10,7 +10,14 @@ def buildMultiPlatform(config)
         returnStdout: true
     ).trim();
     sh "docker buildx use $buildInstance"
-    sh "docker buildx build -t ${config.fullTag} --cache-to=type=local,dest=${config.buildCache} --pull -f ${config.dockerfile} --platform ${config.platforms.join(',')} ."
+    sh """docker buildx build
+            -t ${config.fullTag} \\
+            --cache-from=type=local,src=${config.buildCache} \\
+            --cache-to=type=local,dest=${config.buildCache},mode=max \\
+            --pull \\
+            -f ${config.dockerfile} \\
+            --platform ${config.platforms.join(',')} \\
+            ."""
 }
 
 def build(config)
@@ -42,7 +49,15 @@ def publishMultiPlatform(config)
             returnStdout: true
         ).trim();
         sh "docker buildx use $buildInstance"
-        sh "docker buildx build -t ${config.fullTag} --cache-from=type=local,src=${config.buildCache} --pull -f ${config.dockerfile} --platform ${config.platforms.join(',')} --push ."
+        sh """docker buildx build \\
+                -t ${config.fullTag} \\
+                --cache-from=type=local,src=${config.buildCache} \\
+                --cache-to=type=local,dest=${config.buildCache} \\
+                --pull \\
+                -f ${config.dockerfile} \\
+                --platform ${config.platforms.join(',')} \\
+                --push \\
+                ."""
     }
 }
 
