@@ -5,11 +5,7 @@ def buildLocalPlatform(config)
 
 def buildMultiPlatform(config)
 {
-    def buildInstance = sh (
-        script: "docker buildx create",
-        returnStdout: true
-    ).trim();
-    sh "docker buildx use $buildInstance"
+    sh "docker buildx create --use"
     sh """docker buildx build
             -t ${config.fullTag} \\
             --cache-from=type=local,src=${config.buildCache} \\
@@ -44,11 +40,7 @@ def publishMultiPlatform(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
-        def buildInstance = sh (
-            script: "docker buildx create",
-            returnStdout: true
-        ).trim();
-        sh "docker buildx use $buildInstance"
+        sh "docker buildx create --use"
         sh """docker buildx build \\
                 -t ${config.fullTag} \\
                 --cache-from=type=local,src=${config.buildCache} \\
