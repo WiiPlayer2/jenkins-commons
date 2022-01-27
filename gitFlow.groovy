@@ -1,6 +1,6 @@
 def checkPullRequest()
 {
-    if(changeRequest())
+    if(env.containsKey('CHANGE_TARGET') && env.containsKey('CHANGE_BRANCH'))
     {
         stage('Check PR')
         {
