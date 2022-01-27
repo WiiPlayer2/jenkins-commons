@@ -11,7 +11,7 @@ def build(config)
             returnStdout: true
         ).trim();
         sh "docker buildx use $buildInstance"
-        sh "docker buildx build -t ${config.registry}/${config.imageName}:${config.tag} --pull -f ${config.dockerfile} ."
+        sh "docker buildx build -t ${config.registry}/${config.imageName}:${config.tag} --pull -f ${config.dockerfile} --platform ${config.platforms.join(',')} ."
     }
 }
 
@@ -26,7 +26,7 @@ def publish(config)
                 returnStdout: true
             ).trim();
             sh "docker buildx use $buildInstance"
-            sh "docker buildx build -t ${config.registry}/${config.imageName}:${config.tag} --pull -f ${config.dockerfile} --push ."
+            sh "docker buildx build -t ${config.registry}/${config.imageName}:${config.tag} --pull -f ${config.dockerfile} --platform ${config.platforms.join(',')} --push ."
         }
         else
         {
