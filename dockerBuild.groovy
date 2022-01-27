@@ -44,7 +44,7 @@ def prepare(config)
 
     if(!config.containsKey('buildCache'))
     {
-        config.buildCache = './buildCache';
+        config.buildCache = './dockerBuildCache';
     }
 
     config.fullTag = "${config.registry}/${config.imageName}:${config.tag}";
