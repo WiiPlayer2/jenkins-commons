@@ -1,6 +1,6 @@
 def build(config)
 {
-    match(
+    this.match(
         onLocalPlatform:
         {
             sh "docker build -t ${config.registry}/${config.imageName}:${config.tag} --pull -f ${config.dockerfile} ."
@@ -33,7 +33,7 @@ def publish(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
-        match(
+        this.match(
             onLocalPlatform:
             {
                 def buildInstance = sh (
