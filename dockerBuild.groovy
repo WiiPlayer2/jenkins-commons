@@ -17,7 +17,7 @@ def build(config)
     )
 }
 
-private def match(onLocalPlatform, onMultiPlatform)
+def match(onLocalPlatform, onMultiPlatform)
 {
     if(config.containsKey('platforms') && config.platforms.size() > 0)
     {
