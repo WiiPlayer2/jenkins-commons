@@ -9,7 +9,7 @@ def useHubContainer(body)
 def getProjectEditorVersion(projectPath)
 {
     def projectVersionFilePath = "${projectPath}/ProjectSettings/ProjectVersion.txt";
-    def content = readYaml projectVersionFilePath;
+    def content = readYaml file: projectVersionFilePath;
     return content['m_EditorVersion'];
 }
 
