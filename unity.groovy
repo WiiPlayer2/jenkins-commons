@@ -6,6 +6,12 @@ def useHubContainer(body)
     }
 }
 
+def getProjectEditorVersion(projectPath)
+{
+    def projectVersionFilePath = "${projectPath}/ProjectSettings/ProjectVersion.txt";
+    def content = readYaml projectVersionFilePath;
+    return content['m_EditorVersion'];
+}
 
 def installEditor(version, changeset = null, modules = [])
 {
