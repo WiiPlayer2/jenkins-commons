@@ -21,7 +21,7 @@ def installEditor(version, changeset = null, modules = [])
         cmd += " --changeset $changeset";
     }
 
-    if(modules.size > 0)
+    if(modules.size() > 0)
     {
         cmd += " --modules " + modules.join(',');
     }
