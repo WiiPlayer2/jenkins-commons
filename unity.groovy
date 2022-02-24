@@ -18,7 +18,7 @@ def getProjectEditorChangeset(projectPath)
     def projectVersionFilePath = "${projectPath}/ProjectSettings/ProjectVersion.txt";
     def content = readYaml file: projectVersionFilePath;
     def matches = content['m_EditorVersionWithRevision'] =~ /\(([0-9a-f]{12})\)/;
-    return matches[0][0];
+    return matches[0][1]; // first capture group of first match
 }
 
 def installEditor(version, changeset = null, modules = [])
