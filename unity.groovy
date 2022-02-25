@@ -21,6 +21,11 @@ def getProjectEditorChangeset(projectPath)
     return matches[0][1]; // first capture group of first match
 }
 
+def invokeEditor(version, args)
+{
+    sh "/opt/unity/editors/$version/Editor/Unity -quit -batchmode -nographics $args"
+}
+
 def installEditor(version, changeset = null, modules = [])
 {
     if(modules == null)
