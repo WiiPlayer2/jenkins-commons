@@ -41,15 +41,26 @@ def publishMultiPlatform(config)
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
         sh "docker buildx create --use"
-        sh """docker buildx build \\
-                -t ${config.fullTag} \\
-                --cache-from=type=local,src=${config.buildCache} \\
-                --cache-to=type=local,dest=${config.buildCache} \\
-                --pull \\
-                -f ${config.dockerfile} \\
-                --platform ${config.platforms.join(',')} \\
-                --push \\
-                ."""
+        if(fileExists("${config.buildCache}/index.json")) {
+            sh """docker buildx build \\
+                    -t ${config.fullTag} \\
+                    --cache-from=type=local,src=${config.buildCache} \\
+                    --cache-to=type=local,dest=${config.buildCache} \\
+                    --pull \\
+                    -f ${config.dockerfile} \\
+                    --platform ${config.platforms.join(',')} \\
+                    --push \\
+                    ."""
+        } else {
+            sh """docker buildx build \\
+                    -t ${config.fullTag} \\
+                    --cache-to=type=local,dest=${config.buildCache} \\
+                    --pull \\
+                    -f ${config.dockerfile} \\
+                    --platform ${config.platforms.join(',')} \\
+                    --push \\
+                    ."""
+        }
     }
 }
 
