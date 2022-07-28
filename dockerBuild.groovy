@@ -3,17 +3,36 @@ def buildLocalPlatform(config)
     sh "docker build -t ${config.fullTag} --pull -f ${config.dockerfile} ."
 }
 
+def _runMultiPlatform(body)
+{
+    sh """
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        docker buildx create --name $BUILD_TAG --driver docker-container --use
+        docker buildx inspect --bootstrap
+    """
+    try
+    {
+        body()
+    }
+    finally
+    {
+        sh "docker buildx rm --force $BUILD_TAG"
+    }
+}
+
 def buildMultiPlatform(config)
 {
-    sh "docker buildx create --use"
-    sh """docker buildx build
-            -t ${config.fullTag} \\
-            --cache-from=type=local,src=${config.buildCache} \\
-            --cache-to=type=local,dest=${config.buildCache},mode=max \\
-            --pull \\
-            -f ${config.dockerfile} \\
-            --platform ${config.platforms.join(',')} \\
-            ."""
+    _runMultiPlatform()
+    {
+        sh """docker buildx build
+                -t ${config.fullTag} \\
+                --cache-from=type=local,src=${config.buildCache} \\
+                --cache-to=type=local,dest=${config.buildCache},mode=max \\
+                --pull \\
+                -f ${config.dockerfile} \\
+                --platform ${config.platforms.join(',')} \\
+                ."""
+    }
 }
 
 def build(config)
@@ -40,26 +59,28 @@ def publishMultiPlatform(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
-        sh "docker buildx create --use"
-        if(fileExists("${config.buildCache}/index.json")) {
-            sh """docker buildx build \\
-                    -t ${config.fullTag} \\
-                    --cache-from=type=local,src=${config.buildCache} \\
-                    --cache-to=type=local,dest=${config.buildCache} \\
-                    --pull \\
-                    -f ${config.dockerfile} \\
-                    --platform ${config.platforms.join(',')} \\
-                    --push \\
-                    ."""
-        } else {
-            sh """docker buildx build \\
-                    -t ${config.fullTag} \\
-                    --cache-to=type=local,dest=${config.buildCache} \\
-                    --pull \\
-                    -f ${config.dockerfile} \\
-                    --platform ${config.platforms.join(',')} \\
-                    --push \\
-                    ."""
+        _runMultiPlatform()
+        {
+            if(fileExists("${config.buildCache}/index.json")) {
+                sh """docker buildx build \\
+                        -t ${config.fullTag} \\
+                        --cache-from=type=local,src=${config.buildCache} \\
+                        --cache-to=type=local,dest=${config.buildCache} \\
+                        --pull \\
+                        -f ${config.dockerfile} \\
+                        --platform ${config.platforms.join(',')} \\
+                        --push \\
+                        ."""
+            } else {
+                sh """docker buildx build \\
+                        -t ${config.fullTag} \\
+                        --cache-to=type=local,dest=${config.buildCache} \\
+                        --pull \\
+                        -f ${config.dockerfile} \\
+                        --platform ${config.platforms.join(',')} \\
+                        --push \\
+                        ."""
+            }
         }
     }
 }
