@@ -1,15 +1,18 @@
-def buildLocalPlatform(config)
+// Private
+def __withBuildX(config, body)
 {
-    sh "docker build -t ${config.fullTag} --pull -f ${config.dockerfile} ."
-}
+    if(config.resetBinaries)
+    {
+        sh "docker run --rm --privileged multiarch/qemu-user-static --reset -p yes"
+    }
 
-def _runMultiPlatform(body)
-{
-    sh """
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-        docker buildx create --name $BUILD_TAG --driver docker-container --use
-        docker buildx inspect --bootstrap
-    """
+    sh "docker buildx create --name $BUILD_TAG --use"
+
+    if(config.debug)
+    {
+        sh "docker buildx inspect --bootstrap"
+    }
+
     try
     {
         body()
@@ -20,9 +23,15 @@ def _runMultiPlatform(body)
     }
 }
 
+// Public
+def buildLocalPlatform(config)
+{
+    sh "docker build -t ${config.fullTag} --pull -f ${config.dockerfile} ."
+}
+
 def buildMultiPlatform(config)
 {
-    _runMultiPlatform()
+    __withBuildX(config)
     {
         sh """docker buildx build
                 -t ${config.fullTag} \\
@@ -59,7 +68,7 @@ def publishMultiPlatform(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
-        _runMultiPlatform()
+        __withBuildX(config)
         {
             if(fileExists("${config.buildCache}/index.json")) {
                 sh """docker buildx build \\
@@ -99,19 +108,17 @@ def publish(config)
 
 def prepare(config)
 {
-    if(!config.containsKey('platforms'))
-    {
-        config.platforms = [];
-    }
+    def project = [
+        platforms: [],
+        buildCache: './dockerBuildCache',
+        resetBinaries: false,
+        debug: false,
+    ];
+    project.putAll(config);
 
-    if(!config.containsKey('buildCache'))
-    {
-        config.buildCache = './dockerBuildCache';
-    }
+    project.fullTag = "${project.registry}/${project.imageName}:${project.tag}";
 
-    config.fullTag = "${config.registry}/${config.imageName}:${config.tag}";
-
-    return config;
+    return project;
 }
 
 def buildAndPublish(config)
