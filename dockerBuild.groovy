@@ -1,3 +1,29 @@
+// Private
+def __withBuildX(config, body)
+{
+    if(config.resetBinaries)
+    {
+        sh "docker run --rm --privileged multiarch/qemu-user-static --reset -p yes"
+    }
+
+    sh "docker buildx create --name $BUILD_TAG --use"
+
+    if(config.debug)
+    {
+        sh "docker buildx inspect --bootstrap"
+    }
+
+    try
+    {
+        body()
+    }
+    finally
+    {
+        sh "docker buildx rm --force $BUILD_TAG"
+    }
+}
+
+// Public
 def buildLocalPlatform(config)
 {
     sh "docker build -t ${config.fullTag} --pull -f ${config.dockerfile} ."
@@ -5,15 +31,17 @@ def buildLocalPlatform(config)
 
 def buildMultiPlatform(config)
 {
-    sh "docker buildx create --use"
-    sh """docker buildx build
-            -t ${config.fullTag} \\
-            --cache-from=type=local,src=${config.buildCache} \\
-            --cache-to=type=local,dest=${config.buildCache},mode=max \\
-            --pull \\
-            -f ${config.dockerfile} \\
-            --platform ${config.platforms.join(',')} \\
-            ."""
+    __withBuildX(config)
+    {
+        sh """docker buildx build
+                -t ${config.fullTag} \\
+                --cache-from=type=local,src=${config.buildCache} \\
+                --cache-to=type=local,dest=${config.buildCache},mode=max \\
+                --pull \\
+                -f ${config.dockerfile} \\
+                --platform ${config.platforms.join(',')} \\
+                ."""
+    }
 }
 
 def build(config)
@@ -40,16 +68,29 @@ def publishMultiPlatform(config)
 {
     withDockerRegistry([credentialsId: config.registryCredentials, url: "https://${config.registry}/"])
     {
-        sh "docker buildx create --use"
-        sh """docker buildx build \\
-                -t ${config.fullTag} \\
-                --cache-from=type=local,src=${config.buildCache} \\
-                --cache-to=type=local,dest=${config.buildCache} \\
-                --pull \\
-                -f ${config.dockerfile} \\
-                --platform ${config.platforms.join(',')} \\
-                --push \\
-                ."""
+        __withBuildX(config)
+        {
+            if(fileExists("${config.buildCache}/index.json")) {
+                sh """docker buildx build \\
+                        -t ${config.fullTag} \\
+                        --cache-from=type=local,src=${config.buildCache} \\
+                        --cache-to=type=local,dest=${config.buildCache} \\
+                        --pull \\
+                        -f ${config.dockerfile} \\
+                        --platform ${config.platforms.join(',')} \\
+                        --push \\
+                        ."""
+            } else {
+                sh """docker buildx build \\
+                        -t ${config.fullTag} \\
+                        --cache-to=type=local,dest=${config.buildCache} \\
+                        --pull \\
+                        -f ${config.dockerfile} \\
+                        --platform ${config.platforms.join(',')} \\
+                        --push \\
+                        ."""
+            }
+        }
     }
 }
 
@@ -67,19 +108,17 @@ def publish(config)
 
 def prepare(config)
 {
-    if(!config.containsKey('platforms'))
-    {
-        config.platforms = [];
-    }
+    def project = [
+        platforms: [],
+        buildCache: './dockerBuildCache',
+        resetBinaries: false,
+        debug: false,
+    ];
+    project.putAll(config);
 
-    if(!config.containsKey('buildCache'))
-    {
-        config.buildCache = './dockerBuildCache';
-    }
+    project.fullTag = "${project.registry}/${project.imageName}:${project.tag}";
 
-    config.fullTag = "${config.registry}/${config.imageName}:${config.tag}";
-
-    return config;
+    return project;
 }
 
 def buildAndPublish(config)
