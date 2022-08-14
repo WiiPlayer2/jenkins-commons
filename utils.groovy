@@ -1,3 +1,5 @@
+def causes = load "buildCauses.groovy"
+
 def doesMatch(matchConfig)
 {
     def result = true;
@@ -5,6 +7,12 @@ def doesMatch(matchConfig)
     if(config.containsKey('branch'))
     {
         result = result && env.BRANCH_NAME ==~ config.branch
+    }
+
+    if (config.containsKey('causes'))
+    {
+        result = result && (config.causes.contains('push') || causes.isTriggeredByPush);
+        result = result && (config.causes.contains('cron') || causes.isTriggeredByCron);
     }
 
     return result;
