@@ -1,4 +1,4 @@
-def doesMatch(matchConfig, causes)
+def doesMatch(config, causes)
 {
     def result = true;
 
@@ -9,8 +9,8 @@ def doesMatch(matchConfig, causes)
 
     if (config.containsKey('causes'))
     {
-        result = result && (config.causes.contains('push') || causes.isTriggeredByPush);
-        result = result && (config.causes.contains('cron') || causes.isTriggeredByCron);
+        result = result && (!config.causes.contains('push') || causes.isTriggeredByPush);
+        result = result && (!config.causes.contains('cron') || causes.isTriggeredByCron);
     }
 
     return result;
@@ -20,7 +20,7 @@ def getMatchedConfig(configs, causes)
 {
     for (config in configs)
     {
-        if (doesMatch(config.match))
+        if (doesMatch(config.match, causes))
         {
             return config.config;
         }
