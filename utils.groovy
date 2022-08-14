@@ -9,8 +9,11 @@ def doesMatch(config, causes)
 
     if (config.containsKey('causes'))
     {
+        echo "Checking causes; result: ${result}; causes: ${config.causes}; isPush: ${causes.isTriggeredByPush}; isCron: ${causes.isTriggeredByCron}"
         result = result && !(config.causes.contains('push') && !causes.isTriggeredByPush);
+        echo "result: ${result}"
         result = result && !(config.causes.contains('cron') && !causes.isTriggeredByCron);
+        echo "result: ${result}"
     }
 
     return result;
