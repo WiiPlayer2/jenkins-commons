@@ -1,6 +1,4 @@
-def causes = load "buildCauses.groovy"
-
-def doesMatch(matchConfig)
+def doesMatch(matchConfig, causes)
 {
     def result = true;
 
@@ -18,11 +16,11 @@ def doesMatch(matchConfig)
     return result;
 }
 
-def getMatchedConfig(configs)
+def getMatchedConfig(configs, causes)
 {
     for (config in configs)
     {
-        if (doesMatch(config))
+        if (doesMatch(config.match))
         {
             return config.config;
         }
