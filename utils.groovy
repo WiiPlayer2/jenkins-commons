@@ -4,7 +4,8 @@ def doesMatch(config, causes)
 
     if(config.containsKey('branch'))
     {
-        result = result && env.BRANCH_NAME ==~ config.branch
+        result = result && (env.BRANCH_NAME ==~ config.branch);
+        echo "Check branch ${env.BRANCH_NAME} against pattern ${config.branch}; result: ${result}"
     }
 
     if (config.containsKey('causes'))
