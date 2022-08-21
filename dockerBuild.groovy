@@ -113,6 +113,7 @@ def prepare(config)
         buildCache: './dockerBuildCache',
         resetBinaries: false,
         debug: false,
+        registryCredentials: '',
     ];
     project.putAll(config);
 
