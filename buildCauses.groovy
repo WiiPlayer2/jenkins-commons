@@ -6,16 +6,19 @@ isTriggeredByCron = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$Ti
 
 def selectManually()
 {
-    def inputSelection = input message: 'Select emulated trigger cause', parameters: [choice(choices: ['User', 'Push', 'Cron'], name: 'Cause')]
-    switch(inputSelection)
+    timeout(time: 3, unit: 'HOURS')
     {
-        case "Push":
-            isTriggeredByPush = true;
-            break;
+        def inputSelection = input message: 'Select emulated trigger cause', parameters: [choice(choices: ['User', 'Push', 'Cron'], name: 'Cause')]
+        switch(inputSelection)
+        {
+            case "Push":
+                isTriggeredByPush = true;
+                break;
 
-        case "Cron":
-            isTriggeredByCron = true;
-            break;
+            case "Cron":
+                isTriggeredByCron = true;
+                break;
+        }
     }
 }
 
