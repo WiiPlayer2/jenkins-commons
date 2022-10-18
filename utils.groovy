@@ -32,16 +32,9 @@ def getMatchedConfig(configs, causes)
 def __withVar(name, data)
 {
     if (data instanceof String) {
-        env[name] = data;
         return { b ->
-            env[name] = data;
-            try
-            {
+            withEnv(["${name}=${data}"]) {
                 b();
-            }
-            finally
-            {
-                env[name] = "";
             }
         };
     }
