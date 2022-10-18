@@ -29,4 +29,48 @@ def getMatchedConfig(configs, causes)
     throw "No config match found."
 }
 
+def __withVar(name, data)
+{
+    if (data instanceof String) {
+        env[name] = data;
+        return { b ->
+            env[name] = data;
+            try
+            {
+                b();
+            }
+            finally
+            {
+                env[name] = "";
+            }
+        };
+    }
+
+    if (data instanceof Map) {
+        if (data.containsKey("file")) {
+            return { b ->
+                withCredentials([file(credentialsId: data["file"], variable: name)]) {
+                    b();
+                }
+            }
+        }
+    }
+
+    throw new Exception("Variable of type ${data.getClass()} not handled.");
+}
+
+def withVars(file = "pipeline.vars.yaml", body)
+{
+    data = readYaml file: file;
+
+    currentWrapper = body;
+    for (var in data.vars)
+    {
+        newBody = __withVar(var.key, var.value);
+        currentWrapper = { -> newBody(currentWrapper); };
+    }
+
+    currentWrapper();
+}
+
 return this;
