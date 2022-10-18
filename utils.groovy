@@ -70,6 +70,22 @@ def __withVar(name, data)
                 }
             }
         }
+
+        if (data.containsKey("text")) {
+            return { b ->
+                withCredentials([string(credentialsId: data["text"], variable: name)]) {
+                    b();
+                }
+            }
+        }
+
+        if (data.containsKey("userPass")) {
+            return { b ->
+                withCredentials([usernamePassword(credentialsId: data["userPass"], passwordVariable: "${name}__pass", usernameVariable: "${name}__user")]) {
+                    b();
+                }
+            }
+        }
     }
 
     throw new Exception("Variable of type ${data.getClass()} not handled.");
