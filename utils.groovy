@@ -93,7 +93,32 @@ def __withVar(name, data)
 
 def __checkVarsFilter(filter)
 {
-    if(filter.containsKey("branch"))
+    if (filter.containsKey("or"))
+    {
+        def result = false;
+        for (subFilter in filter.or)
+        {
+            result = result || __checkVarsFilter(subFilter);
+        }
+        return result;
+    }
+
+    if (filter.containsKey("and"))
+    {
+        def result = true;
+        for (subFilter in filter.and)
+        {
+            result = result && __checkVarsFilter(subFilter);
+        }
+        return result;
+    }
+
+    if (filter.containsKey("not"))
+    {
+        return !__checkVarsFilter(filter.not);
+    }
+
+    if (filter.containsKey("branch"))
     {
         return env.BRANCH_NAME =~ filter.branch;
     }
@@ -105,7 +130,7 @@ def __buildVars(data)
 {
     def vars = data.vars;
 
-    for (filterVars in data.filters)
+    for (filterVars in data.filtered)
     {
         if(!__checkVarsFilter(filterVars.filter))
         {
