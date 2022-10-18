@@ -4,7 +4,7 @@ def doesMatch(config, causes)
 
     if(config.containsKey('branch'))
     {
-        result = result && (env.BRANCH_NAME ==~ config.branch);
+        result = result && (env.BRANCH_NAME =~ config.branch);
     }
 
     if (config.containsKey('causes'))
@@ -75,20 +75,47 @@ def __withVar(name, data)
     throw new Exception("Variable of type ${data.getClass()} not handled.");
 }
 
+def __checkVarsFilter(filter)
+{
+    if(filter.containsKey("branch"))
+    {
+        return env.BRANCH_NAME =~ filter.branch;
+    }
+
+    return true;
+}
+
+def __buildVars(data)
+{
+    def vars = data.vars;
+
+    for (filterVars in data.filters)
+    {
+        if(!__checkVarsFilter(filterVars.filter))
+        {
+            continue;
+        }
+
+        vars << filterVars.vars;
+    }
+
+    return vars;
+}
+
 def withVars(file = "pipeline.vars.yaml", body)
 {
-    data = readYaml file: file;
-    wrappers = [];
-
+    def data = readYaml file: file;
     // echo "data: $data"
+    def vars = __buildVars(data);
 
-    for (var in mapToList(data.vars))
+    def wrappers = [];
+    for (var in mapToList(vars))
     {
         newBody = __withVar(var[0], var[1]);
         wrappers.add(newBody);
     }
 
-    wrapped = { -> body() };
+    def wrapped = { -> body() };
     for (def i = 0; i < wrappers.size(); i++)
     {
         def currentIndex = i;
