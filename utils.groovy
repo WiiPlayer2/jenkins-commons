@@ -54,6 +54,22 @@ def __withVar(name, data)
                 }
             }
         }
+
+        if (data.containsKey("registry")) {
+            return { b ->
+                withDockerRegistry(credentialsId: data["registry"], url: name) {
+                    b();
+                }
+            }
+        }
+
+        if (data.containsKey("sshKey")) {
+            return { b ->
+                withCredentials([sshUserPrivateKey(credentialsId: data["sshKey"], keyFileVariable: "${name}__key", passphraseVariable: "${name}__pass", usernameVariable: "${name}__user")]) {
+                    b();
+                }
+            }
+        }
     }
 
     throw new Exception("Variable of type ${data.getClass()} not handled.");
