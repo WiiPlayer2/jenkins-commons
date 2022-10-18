@@ -77,7 +77,7 @@ def withVars(file = "pipeline.vars.yaml", body)
     {
         def currentIndex = i;
         def currentWrapped = wrapped;
-        wrapped = { -> wrappers[currentIndex](wrapped) };
+        wrapped = { -> wrappers[currentIndex](currentWrapped) };
     }
 
     wrapped();
