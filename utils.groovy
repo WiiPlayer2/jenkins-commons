@@ -62,15 +62,21 @@ def __withVar(name, data)
 def withVars(file = "pipeline.vars.yaml", body)
 {
     data = readYaml file: file;
+    wrappers = [];
 
-    currentWrapper = body;
     for (var in mapToList(data.vars))
     {
         newBody = __withVar(var[0], var[1]);
-        currentWrapper = { -> newBody(currentWrapper); };
+        wrappers.add(newBody);
     }
 
-    currentWrapper();
+    wrapped = { b -> b() };
+    for (def i = 0; i < wrappers.size(); i++)
+    {
+        wrapped = { b -> wrappers[0](b) };
+    }
+
+    wrapped();
 }
 
 return this;
