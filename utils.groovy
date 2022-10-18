@@ -78,7 +78,7 @@ def withVars(file = "pipeline.vars.yaml", body)
         wrapped = { b -> wrappers[0](b) };
     }
 
-    wrapped();
+    wrapped(body);
 }
 
 return this;
