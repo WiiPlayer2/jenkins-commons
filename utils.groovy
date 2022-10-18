@@ -38,14 +38,6 @@ List<List<?>> mapToList(Map map) {
 
 def __withVar(name, data)
 {
-    if (data instanceof String) {
-        return { b ->
-            withEnv(["${name}=${data}"]) {
-                b();
-            }
-        };
-    }
-
     if (data instanceof Map) {
         if (data.containsKey("file")) {
             return { b ->
@@ -88,7 +80,11 @@ def __withVar(name, data)
         }
     }
 
-    throw new Exception("Variable of type ${data.getClass()} not handled.");
+    return { b ->
+        withEnv(["${name}=${data}"]) {
+            b();
+        }
+    };
 }
 
 def __checkVarsFilter(filter)
