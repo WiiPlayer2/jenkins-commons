@@ -64,7 +64,7 @@ def withVars(file = "pipeline.vars.yaml", body)
     data = readYaml file: file;
     wrappers = [];
 
-    echo "data: $data"
+    // echo "data: $data"
 
     for (var in mapToList(data.vars))
     {
