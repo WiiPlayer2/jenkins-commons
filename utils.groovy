@@ -29,6 +29,13 @@ def getMatchedConfig(configs, causes)
     throw "No config match found."
 }
 
+@NonCPS
+List<List<?>> mapToList(Map map) {
+  return map.collect { it ->
+    [it.key, it.value]
+  }
+}
+
 def __withVar(name, data)
 {
     if (data instanceof String) {
@@ -57,9 +64,9 @@ def withVars(file = "pipeline.vars.yaml", body)
     data = readYaml file: file;
 
     currentWrapper = body;
-    for (var in data.vars)
+    for (var in mapToList(data.vars))
     {
-        newBody = __withVar(var.key, var.value);
+        newBody = __withVar(var[0], var[1]);
         currentWrapper = { -> newBody(currentWrapper); };
     }
 
