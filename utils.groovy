@@ -61,9 +61,6 @@ def __withVar(name, data)
 
 def withVars(file = "pipeline.vars.yaml", body)
 {
-    echo "file: $file"
-    echo "body: $body"
-
     data = readYaml file: file;
     wrappers = [];
 
