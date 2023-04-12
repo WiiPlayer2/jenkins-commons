@@ -9,33 +9,14 @@ def run(stageName)
 def runAll()
 {
     def buildConfigs = _loadConfiguration();
-    def exception = null;
 
     for(stageName in _gatherStages(buildConfigs))
     {
         stage(stageName)
         {
-            if(exception)
-            {
-                Utils.markStageSkippedForFailure(stageName);
-            }
-            else
-            {
-                try
-                {
-                    _run(stageName, buildConfigs);
-                }
-                catch(Exception e)
-                {
-                    exception = e;
-                    Utils.markStageFailedAndContinued(stageName);
-                }
-            }
+            _run(stageName, buildConfigs);
         }
     }
-
-    if(exception)
-        throw exception;
 }
 
 def _gatherStages(buildConfigs)
