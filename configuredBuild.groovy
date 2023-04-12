@@ -40,7 +40,7 @@ def _run(stageName, config)
 
     echo "[$stageName] ${config.type}: ${config.data}";
 
-    def preparedConfig = builder.createConfig();
+    def preparedConfig = config.builder.createConfig();
     preparedConfig.putAll(config.data);
 
     config.builder.preStage(stageName);
