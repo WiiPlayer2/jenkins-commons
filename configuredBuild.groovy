@@ -1,3 +1,5 @@
+import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
+
 def run(stageName)
 {
     def buildConfigs = _loadConfiguration();
@@ -7,14 +9,38 @@ def run(stageName)
 def runAll()
 {
     def buildConfigs = _loadConfiguration();
+    def exception = null;
 
-    for(stageName in config.builder.getStages())
+    for(stageName in _gatherStages(buildConfigs))
     {
         stage(stageName)
         {
-            _run(stageName, buildConfigs);
+            if(exception)
+            {
+                Utils.markStageSkippedForFailure(stageName);
+            }
+            else
+            {
+                try
+                {
+                    _run(stageName, buildConfigs);
+                }
+                catch(Exception e)
+                {
+                    exception = e;
+                    Utils.markStageFailedAndContinued(stageName);
+                }
+            }
         }
     }
+
+    if(exception)
+        throw exception;
+}
+
+def _gatherStages(buildConfigs)
+{
+    return buildConfigs[0].builder.getStages(); // Just return the stages of the first config for now
 }
 
 def _loadConfiguration()
