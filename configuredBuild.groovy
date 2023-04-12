@@ -31,11 +31,11 @@ def _loadConfiguration()
         def data = kv.value;
 
         if(!builders.containsKey(type))
-            builders[type] = load "ci/jenkins/types/${configurationType}.groovy";
+            builders[type] = load "ci/jenkins/types/${type}.groovy";
 
         buildConfigs.add([
-            type: configurationType,
-            data: configurationData,
+            type: type,
+            data: data,
             builder: builders[type],
         ]);
     }
