@@ -4,7 +4,7 @@ def run(stageName)
     _run(stageName, config);
 }
 
-def run()
+def runAll()
 {
     def config = _loadConfiguration();
 
