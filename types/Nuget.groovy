@@ -44,7 +44,6 @@ def Build(config)
 def Test(config)
 {
     sh "dotnet test --no-build --configuration Release ${config.Project}"
-    error "This is only temporary"
 }
 
 def Pack(config)
