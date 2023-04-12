@@ -6,7 +6,7 @@ def run(stageName)
     def configurationData = kv.value;
 
     echo "Using \"$configurationType\"..."
-    def builder = load "ci/jenkins/${configurationType}.groovy";
+    def builder = load "ci/jenkins/types/${configurationType}.groovy";
     builder."$stageName"(configurationData);
 }
 
