@@ -46,7 +46,7 @@ def Pack(config)
 {
     def versionSuffix = config.VersionSuffix;
     if(versionSuffix == "$TIMESTAMP")
-        versionSuffix = "$(date +%s)"
+        versionSuffix = '$(date +%s)'
 
     sh "dotnet pack --no-build --configuration Release --output ${config.PackageOutput} --version-suffix \"${versionSuffix}\" ${config.Project}"
 }
