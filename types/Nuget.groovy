@@ -4,7 +4,11 @@
 def getStages()
 {
     return [
+        "Cleanup",
         "Build",
+        "Test",
+        "Pack",
+        "Publish",
     ];
 }
 
