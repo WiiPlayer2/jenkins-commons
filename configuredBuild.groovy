@@ -1,18 +1,18 @@
 def run(stageName)
 {
-    def config = _loadConfiguration();
-    _run(stageName, config);
+    def buildConfigs = _loadConfiguration();
+    _run(stageName, buildConfigs);
 }
 
 def runAll()
 {
-    def config = _loadConfiguration();
+    def buildConfigs = _loadConfiguration();
 
     for(stageName in config.builder.getStages())
     {
         stage(stageName)
         {
-            _run(stageName, config);
+            _run(stageName, buildConfigs);
         }
     }
 }
@@ -20,32 +20,48 @@ def runAll()
 def _loadConfiguration()
 {
     def configuration = readYaml file: "CI.yaml";
-    def kv = configuration.entrySet().iterator().next(); // only support single configuration for now
-    def configurationType = kv.key;
-    def configurationData = kv.value;
 
-    def builder = load "ci/jenkins/types/${configurationType}.groovy";
+    def builders = [:];
+    def buildConfigs [];
 
-    return [
-        type: configurationType,
-        data: configurationData,
-        builder: builder,
-    ];
+    for(buildConfig in configuration)
+    {
+        def kv = buildConfig.entrySet().iterator().next();
+        def type = kv.key;
+        def data = kv.value;
+
+        if(!builders.containsKey(type))
+            builders[type] = load "ci/jenkins/types/${configurationType}.groovy";
+
+        buildConfigs.add([
+            type: configurationType,
+            data: configurationData,
+            builder: builders[type],
+        ]);
+    }
+
+    return buildConfigs;
 }
 
-def _run(stageName, config)
+def _run(stageName, buildConfigs)
 {
-    if(!config.builder.getStages().contains(stageName))
+    for(buildConfig in buildConfigs)
+        _runSingle(stageName, buildConfig);
+}
+
+def _runSingle(stageName, buildConfig)
+{
+    if(!buildConfig.builder.getStages().contains(stageName))
         return;
 
-    echo "[$stageName] ${config.type}: ${config.data}";
+    echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
 
-    def preparedConfig = config.builder.createConfig();
-    preparedConfig.putAll(config.data);
+    def preparedConfig = buildConfig.builder.createConfig();
+    preparedConfig.putAll(buildConfig.data);
 
-    config.builder.preStage(stageName);
-    config.builder."$stageName"(preparedConfig);
-    config.builder.postStage(stageName);
+    buildConfig.builder.preStage(stageName);
+    buildConfig.builder."$stageName"(preparedConfig);
+    buildConfig.builder.postStage(stageName);
 }
 
 return this;
