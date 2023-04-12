@@ -22,7 +22,7 @@ def _loadConfiguration()
     def configuration = readYaml file: "CI.yaml";
 
     def builders = [:];
-    def buildConfigs [];
+    def buildConfigs = [];
 
     for(buildConfig in configuration)
     {
