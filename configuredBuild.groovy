@@ -14,7 +14,9 @@ def run(stageName)
     def preparedConfig = builder.createConfig();
     preparedConfig.putAll(configurationData);
 
+    builder.preStage(stageName);
     builder."$stageName"(preparedConfig);
+    builder.postStage(stageName);
 }
 
 return this;
