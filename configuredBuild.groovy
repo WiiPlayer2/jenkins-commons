@@ -9,8 +9,11 @@ def run(stageName)
 def runAll()
 {
     def buildConfigs = _loadConfiguration();
+    def stages = _gatherStages(buildConfigs);
 
-    for(stageName in _gatherStages(buildConfigs))
+    echo "Stages: $stages";
+
+    for(stageName in stages)
     {
         stage(stageName)
         {
