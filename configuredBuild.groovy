@@ -5,9 +5,16 @@ def run(stageName)
     def configurationType = kv.key;
     def configurationData = kv.value;
 
-    echo "Using \"$configurationType\"..."
     def builder = load "ci/jenkins/types/${configurationType}.groovy";
-    builder."$stageName"(configurationData);
+    if(!builder.stages.contains(stageName))
+        return;
+
+    echo "[$stageName] $configurationType: $configurationData";
+
+    def preparedConfig = builder.defaultConfig.clone();
+    preparedConfig.putAll(configurationData);
+
+    builder."$stageName"(preparedConfig);
 }
 
 return this;
