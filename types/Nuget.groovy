@@ -1,9 +1,21 @@
-def stages = [
-    "Build",
-];
+//--------------
+// Core methods
+//--------------
+def getStages()
+{
+    return [
+        "Build",
+    ];
+}
 
-def defaultConfig = [:];
+def createConfig()
+{
+    return [:];
+}
 
+//--------
+// Stages
+//--------
 def Build(config)
 {
     echo "would have built nuget 🤷";
