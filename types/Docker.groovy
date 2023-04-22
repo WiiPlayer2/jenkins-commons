@@ -60,7 +60,7 @@ def __getFullTag(config) {
 }
 
 def __buildLocalPlatform(config, fullTag) {
-    sh "docker build -t ${fullTag} --pull -f ${config.dockerfile} .";
+    sh "docker build -t ${fullTag} --pull -f ${config.Dockerfile} .";
 }
 
 def __publishLocalPlatform(config, fullTag) {
