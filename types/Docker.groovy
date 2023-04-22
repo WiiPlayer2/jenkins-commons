@@ -63,7 +63,7 @@ def __buildLocalPlatform(config, fullTag) {
     sh "docker build -t ${fullTag} --pull -f ${config.dockerfile} .";
 }
 
-def __publishMultiPlatform(config, fullTag) {
+def __publishLocalPlatform(config, fullTag) {
     sh "docker image push ${fullTag}";
 }
 
