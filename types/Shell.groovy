@@ -1,7 +1,7 @@
 //--------------
 // Core methods
 //--------------
-metadata = [
+@Field def metadata = [
     WrapStage = true,
     FixedStages = false,
 ];
