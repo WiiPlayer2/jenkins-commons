@@ -66,8 +66,6 @@ def _loadConfiguration()
         ]);
     }
 
-    echo "${builders}"
-
     return buildConfigs;
 }
 
@@ -91,6 +89,7 @@ def _runSingle(stageName, buildConfig)
         return;
 
     echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
+    echo "${buildConfig}"
 
     def preparedConfig = buildConfig.builder.createConfig();
     preparedConfig.putAll(buildConfig.data);
