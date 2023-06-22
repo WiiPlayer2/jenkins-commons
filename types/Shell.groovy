@@ -37,9 +37,9 @@ def wrapStage(stageName, config, body)
 //--------
 def runStage(stageName, config)
 {
-    for (cmd in config.Commands)
+    for (cmd in config.Stages[stageName].Commands)
     {
-        sh cmd
+        sh cmd;
     }
 }
 
