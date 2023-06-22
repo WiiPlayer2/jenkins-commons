@@ -1,12 +1,12 @@
 //--------------
 // Core methods
 //--------------
-import groovy.transform.Field;
-
-@Field def metadata = [
-    WrapStage: false,
-    FixedStages: true,
-];
+def getMetadata() {
+    return [
+        WrapStage: false,
+        FixedStages: false,
+    ];
+}
 
 def createConfig()
 {
@@ -26,8 +26,6 @@ def postStage(stageName) { }
 // Stages
 //--------
 def runStage(stageName, config) { }
-
-def Build(config) { }
 
 //---------
 // Helpers

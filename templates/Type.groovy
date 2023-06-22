@@ -1,12 +1,12 @@
 //--------------
 // Core methods
 //--------------
-import groovy.transform.Field;
-
-@Field def metadata = [
-    WrapStage: false,
-    FixedStages: true,
-];
+def getMetadata() {
+    return [
+        WrapStage: false,
+        FixedStages: true,
+    ];
+}
 
 def createConfig()
 {

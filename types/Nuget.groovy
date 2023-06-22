@@ -1,9 +1,11 @@
 //--------------
 // Core methods
 //--------------
-def metadata = [
-    WrapStage: true
-];
+def getMetadata() {
+    return [
+        WrapStage: true,
+    ];
+}
 
 def getStages(config)
 {

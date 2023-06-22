@@ -38,13 +38,13 @@ def _loadBuilder(type)
 {
     def builder = load "ci/jenkins/types/${type}.groovy";
 
-    echo "${builder.metadata}"
-
     def metadata = _metadataDefaults();
-    metadata.putAll(builder.metadata ?: [:]);
-    builder.metadata = metadata;
+    metadata.putAll(builder.getMetadata() ?: [:]);
 
-    return builder;
+    return [
+        b: builder,
+        m: metadata,
+    ];
 }
 
 def _loadConfiguration()
@@ -80,32 +80,31 @@ def _run(stageName, buildConfigs)
 }
 
 def _callStage(builder, stageName, config) {
-    if (builder.metadata.FixedStages) {
-        builder."$stageName"(config);
+    if (builder.m.FixedStages) {
+        builder.b."$stageName"(config);
     } else {
-        builder.runStage(stageName, config);
+        builder.b.runStage(stageName, config);
     }
 }
 
 def _runSingle(stageName, buildConfig)
 {
-    if(!buildConfig.builder.getStages(buildConfig.data).contains(stageName))
+    if(!buildConfig.builder.b.getStages(buildConfig.data).contains(stageName))
         return;
 
     echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
-    echo "${buildConfig.builder.metadata}"
 
-    def preparedConfig = buildConfig.builder.createConfig();
+    def preparedConfig = buildConfig.builder.b.createConfig();
     preparedConfig.putAll(buildConfig.data);
 
-    if (buildConfig.builder.metadata.WrapStage) {
-        buildConfig.builder.wrapStage(stageName, preparedConfig, {
+    if (buildConfig.builder.m.WrapStage) {
+        buildConfig.builder.b.wrapStage(stageName, preparedConfig, {
             _callStage(buildConfig.builder, stageName, preparedConfig);
         })
     } else {
-        buildConfig.builder.preStage(stageName);
+        buildConfig.builder.b.preStage(stageName);
         _callStage(buildConfig.builder, stageName, preparedConfig);
-        buildConfig.builder.postStage(stageName);
+        buildConfig.builder.b.postStage(stageName);
     }
 }
 

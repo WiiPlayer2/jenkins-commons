@@ -1,6 +1,10 @@
 //--------------
 // Core methods
 //--------------
+def getMetadata() {
+    return [:];
+}
+
 def getStages(config)
 {
     return [
