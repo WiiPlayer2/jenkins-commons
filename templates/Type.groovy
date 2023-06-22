@@ -1,7 +1,9 @@
 //--------------
 // Core methods
 //--------------
-def metadata = [
+import groovy.transform.Field;
+
+@Field def metadata = [
     WrapStage: false,
     FixedStages: true,
 ];
