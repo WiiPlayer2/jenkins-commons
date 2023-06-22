@@ -2,8 +2,8 @@
 // Core methods
 //--------------
 def metadata = [
-    WrapStage = false,
-    FixedStages = true,
+    WrapStage: false,
+    FixedStages: true,
 ];
 
 def createConfig()

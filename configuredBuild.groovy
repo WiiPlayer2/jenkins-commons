@@ -1,8 +1,8 @@
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
 
 _defaultMetadata = [
-    WrapStage = false,
-    FixedStages = true,
+    WrapStage: false,
+    FixedStages: true,
 ];
 
 def run(stageName)
