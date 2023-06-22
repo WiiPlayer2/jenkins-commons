@@ -1,6 +1,6 @@
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
 
-def _defaultMetadata = [
+_defaultMetadata = [
     WrapStage = false,
     FixedStages = true,
 ];

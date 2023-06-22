@@ -1,7 +1,7 @@
 //--------------
 // Core methods
 //--------------
-def metadata = [
+metadata = [
     WrapStage = true,
     FixedStages = false,
 ];
