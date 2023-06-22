@@ -1,10 +1,5 @@
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
 
-_defaultMetadata = [
-    WrapStage: false,
-    FixedStages: true,
-];
-
 def run(stageName)
 {
     def buildConfigs = _loadConfiguration();
@@ -27,6 +22,13 @@ def runAll()
     }
 }
 
+def _metadataDefaults() {
+    return [
+        WrapStage: false,
+        FixedStages: true,
+    ];
+}
+
 def _gatherStages(buildConfigs)
 {
     return buildConfigs[0].builder.getStages(buildConfigs[0].data); // Just return the stages of the first config for now
@@ -36,7 +38,7 @@ def _loadBuilder(type)
 {
     def builder = load "ci/jenkins/types/${type}.groovy";
 
-    def metadata = _defaultMetadata.clone();
+    def metadata = _metadataDefaults();
     metadata.putAll(builder.metadata ?: [:]);
     builder.metadata = metadata;
 
