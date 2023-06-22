@@ -89,7 +89,7 @@ def _runSingle(stageName, buildConfig)
         return;
 
     echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
-    echo "${buildConfig}"
+    echo "${buildConfig.builder.metadata}"
 
     def preparedConfig = buildConfig.builder.createConfig();
     preparedConfig.putAll(buildConfig.data);
