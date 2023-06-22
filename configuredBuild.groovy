@@ -31,7 +31,7 @@ def _metadataDefaults() {
 
 def _gatherStages(buildConfigs)
 {
-    return buildConfigs[0].builder.getStages(buildConfigs[0].data); // Just return the stages of the first config for now
+    return buildConfigs[0].builder.b.getStages(buildConfigs[0].data); // Just return the stages of the first config for now
 }
 
 def _loadBuilder(type)
