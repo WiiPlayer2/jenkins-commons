@@ -85,7 +85,7 @@ def _callStage(builder, stageName, config) {
 
 def _runSingle(stageName, buildConfig)
 {
-    if(!buildConfig.builder.getStages().contains(stageName))
+    if(!buildConfig.builder.getStages(buildConfig.data).contains(stageName))
         return;
 
     echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
