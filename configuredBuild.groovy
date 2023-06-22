@@ -66,6 +66,8 @@ def _loadConfiguration()
         ]);
     }
 
+    echo "${builders}"
+
     return buildConfigs;
 }
 
