@@ -1,5 +1,9 @@
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
 
+def _defaultMetadata = [
+    CanWrapStage = false,
+];
+
 def run(stageName)
 {
     def buildConfigs = _loadConfiguration();
@@ -27,6 +31,17 @@ def _gatherStages(buildConfigs)
     return buildConfigs[0].builder.getStages(); // Just return the stages of the first config for now
 }
 
+def _loadBuilder(type)
+{
+    def builder = load "ci/jenkins/types/${type}.groovy";
+
+    def metadata = _defaultMetadata.clone();
+    metadata.putAll(builder.metadata ?: [:]);
+    builder.metadata = metadata;
+
+    return builder;
+}
+
 def _loadConfiguration()
 {
     def configuration = readYaml file: "CI.yaml";
@@ -41,7 +56,7 @@ def _loadConfiguration()
         def data = kv.value;
 
         if(!builders.containsKey(type))
-            builders[type] = load "ci/jenkins/types/${type}.groovy";
+            builders[type] = _loadBuilder(type);
 
         buildConfigs.add([
             type: type,
@@ -69,9 +84,15 @@ def _runSingle(stageName, buildConfig)
     def preparedConfig = buildConfig.builder.createConfig();
     preparedConfig.putAll(buildConfig.data);
 
-    buildConfig.builder.preStage(stageName);
-    buildConfig.builder."$stageName"(preparedConfig);
-    buildConfig.builder.postStage(stageName);
+    if (buildConfig.builder.metadata.CanWrapStage) {
+        buildConfig.builder.wrapStage(stageName, preparedConfig, {
+            buildConfig.builder."$stageName"(preparedConfig);
+        })
+    } else {
+        buildConfig.builder.preStage(stageName);
+        buildConfig.builder."$stageName"(preparedConfig);
+        buildConfig.builder.postStage(stageName);
+    }
 }
 
 return this;

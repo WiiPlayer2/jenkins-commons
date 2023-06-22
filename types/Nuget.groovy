@@ -1,6 +1,10 @@
 //--------------
 // Core methods
 //--------------
+def metadata = [
+    CanWrapStage: true
+];
+
 def getStages()
 {
     return [
@@ -15,6 +19,7 @@ def getStages()
 def createConfig()
 {
     return [
+        BuildImage: null,
         PackageOutput: "./packages",
         VersionSuffix: "",
     ];
@@ -22,10 +27,20 @@ def createConfig()
 
 def preStage(stageName)
 {
-    env.DOTNET_CLI_HOME = '/tmp/DOTNET_CLI_HOME'
 }
 
 def postStage(stageName) { }
+
+def wrapStage(stageName, config, body)
+{
+    env.DOTNET_CLI_HOME = '/tmp/DOTNET_CLI_HOME'
+
+    if(config.BuildImage == null) {
+        body();
+    } else {
+        docker.image(config.BuildImage) body;
+    }
+}
 
 //--------
 // Stages
