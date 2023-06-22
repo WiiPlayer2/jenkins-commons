@@ -18,10 +18,7 @@ def createConfig()
 
 def getStages(config)
 {
-    return [
-        "Build",
-        "Publish",
-    ];
+    return config.Stages.collect { it.Name };
 }
 
 def wrapStage(stageName, config, body)
@@ -40,7 +37,10 @@ def wrapStage(stageName, config, body)
 //--------
 def runStage(stageName, config)
 {
-    sh "echo TODO"
+    for (cmd in config.Commands)
+    {
+        sh cmd
+    }
 }
 
 //---------
