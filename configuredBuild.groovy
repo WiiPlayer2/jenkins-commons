@@ -93,7 +93,7 @@ def _runSingle(stageName, buildConfig)
     def preparedConfig = buildConfig.builder.createConfig();
     preparedConfig.putAll(buildConfig.data);
 
-    if (buildConfig.builder.metadata.CanWrapStage) {
+    if (buildConfig.builder.metadata.WrapStage) {
         buildConfig.builder.wrapStage(stageName, preparedConfig, {
             _callStage(buildConfig.builder, stageName, preparedConfig);
         })
