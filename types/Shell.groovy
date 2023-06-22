@@ -44,3 +44,5 @@ def runStage(stageName, config)
 //---------
 // Helpers
 //---------
+
+return this;

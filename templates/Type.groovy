@@ -33,3 +33,5 @@ def Publish(config) { }
 //---------
 // Helpers
 //---------
+
+return this;
