@@ -18,7 +18,7 @@ def createConfig()
 
 def getStages(config)
 {
-    return config.Stages.collect { it.Key };
+    return config.Stages.collect { it.getKey() };
 }
 
 def wrapStage(stageName, config, body)
