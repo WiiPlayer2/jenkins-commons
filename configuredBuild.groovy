@@ -38,6 +38,8 @@ def _loadBuilder(type)
 {
     def builder = load "ci/jenkins/types/${type}.groovy";
 
+    echo "${builder.metadata}"
+
     def metadata = _metadataDefaults();
     metadata.putAll(builder.metadata ?: [:]);
     builder.metadata = metadata;
