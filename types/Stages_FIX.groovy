@@ -5,7 +5,7 @@ import groovy.transform.Field;
 
 @Field def metadata = [
     WrapStage: false,
-    FixedStages: false,
+    FixedStages: true,
 ];
 
 def createConfig()
@@ -26,6 +26,8 @@ def postStage(stageName) { }
 // Stages
 //--------
 def runStage(stageName, config) { }
+
+def Build(config) { }
 
 //---------
 // Helpers
