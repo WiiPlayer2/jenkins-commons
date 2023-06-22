@@ -18,7 +18,7 @@ def createConfig()
 
 def getStages(config)
 {
-    return config.Stages.collect { it.Name };
+    return config.Stages.collect { it.Key };
 }
 
 def wrapStage(stageName, config, body)
@@ -37,7 +37,7 @@ def wrapStage(stageName, config, body)
 //--------
 def runStage(stageName, config)
 {
-    for (cmd in config.Stages[stageName].Commands)
+    for (cmd in config.Stages.get(stageName).Commands)
     {
         sh cmd;
     }
