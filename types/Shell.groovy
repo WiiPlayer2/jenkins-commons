@@ -29,7 +29,9 @@ def wrapStage(stageName, config, body)
     if (config.RunInImage == null) {
         body();
     } else {
-        docker.image(config.RunInImage) body;
+        docker.image(config.RunInImage) {
+            body();
+        }
     }
 }
 
