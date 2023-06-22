@@ -1,7 +1,8 @@
 import org.jenkinsci.plugins.pipeline.modeldefinition.Utils;
 
 def _defaultMetadata = [
-    CanWrapStage = false,
+    WrapStage = false,
+    FixedStages = true,
 ];
 
 def run(stageName)
@@ -74,6 +75,14 @@ def _run(stageName, buildConfigs)
         _runSingle(stageName, buildConfig);
 }
 
+def _callStage(builder, stageName, config) {
+    if (builder.metadata.FixedStages) {
+        builder."$stageName"(config);
+    } else {
+        builder.runStage(stageName, config);
+    }
+}
+
 def _runSingle(stageName, buildConfig)
 {
     if(!buildConfig.builder.getStages().contains(stageName))
@@ -86,11 +95,11 @@ def _runSingle(stageName, buildConfig)
 
     if (buildConfig.builder.metadata.CanWrapStage) {
         buildConfig.builder.wrapStage(stageName, preparedConfig, {
-            buildConfig.builder."$stageName"(preparedConfig);
+            _callStage(buildConfig.builder, stageName, preparedConfig);
         })
     } else {
         buildConfig.builder.preStage(stageName);
-        buildConfig.builder."$stageName"(preparedConfig);
+        _callStage(buildConfig.builder, stageName, preparedConfig);
         buildConfig.builder.postStage(stageName);
     }
 }

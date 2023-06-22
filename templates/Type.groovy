@@ -1,17 +1,22 @@
 //--------------
 // Core methods
 //--------------
-def getStages()
+def metadata = [
+    WrapStage = false,
+    FixedStages = true,
+];
+
+def createConfig()
+{
+    return [:];
+}
+
+def getStages(config)
 {
     return [
         "Build",
         "Publish",
     ];
-}
-
-def createConfig()
-{
-    return [:];
 }
 
 def preStage(stageName) { }
@@ -21,11 +26,9 @@ def postStage(stageName) { }
 //--------
 // Stages
 //--------
-def Build(config) {
-}
+def Build(config) { }
 
-def Publish(config) {
-}
+def Publish(config) { }
 
 //---------
 // Helpers

@@ -2,10 +2,10 @@
 // Core methods
 //--------------
 def metadata = [
-    CanWrapStage: true
+    WrapStage: true
 ];
 
-def getStages()
+def getStages(config)
 {
     return [
         "Cleanup",

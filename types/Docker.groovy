@@ -1,7 +1,7 @@
 //--------------
 // Core methods
 //--------------
-def getStages()
+def getStages(config)
 {
     return [
         "Build",
