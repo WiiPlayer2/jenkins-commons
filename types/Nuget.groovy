@@ -35,6 +35,7 @@ def postStage(stageName) { }
 
 def wrapStage(stageName, config, body)
 {
+    env.HOME = '/tmp'
     env.DOTNET_CLI_HOME = '/tmp/DOTNET_CLI_HOME'
 
     if(config.BuildImage == null) {
