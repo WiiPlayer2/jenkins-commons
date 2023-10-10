@@ -56,9 +56,21 @@ def _loadConfiguration()
 
     for(buildConfig in configuration)
     {
-        def kv = buildConfig.entrySet().iterator().next();
+        def iterator = buildConfig.entrySet().iterator();
+
+        def kv = iterator.next();
+        if(kv.key == 'Matcher')
+            kv = iterator.next();
+
         def type = kv.key;
         def data = kv.value;
+
+        def doesMatch = buildConfig.containsKey('Matcher')
+            ? _doesMatch(buildConfig['Matcher'])
+            : true;
+
+        if(!doesMatch)
+            continue;
 
         if(!builders.containsKey(type))
             builders[type] = _loadBuilder(type);
@@ -71,6 +83,14 @@ def _loadConfiguration()
     }
 
     return buildConfigs;
+}
+
+def _doesMatch(matcher)
+{
+    if(matcher.containsKey('Branch') && !(env.BRANCH_NAME ==~ matcher.Branch))
+        return false;
+
+    return true;
 }
 
 def _run(stageName, buildConfigs)
