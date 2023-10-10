@@ -24,6 +24,7 @@ def createConfig()
         BuildImage: null,
         PackageOutput: "./packages",
         VersionSuffix: "",
+        PackageFilter: "*",
     ];
 }
 
@@ -77,7 +78,7 @@ def Publish(config)
 {
     withCredentials([usernamePassword(credentialsId: config.SourceCredentials, passwordVariable: 'apiKey', usernameVariable: 'source')])
     {
-        sh "dotnet nuget push ${config.PackageOutput}/* --skip-duplicate --source $source --api-key $apiKey"
+        sh "dotnet nuget push ${config.PackageOutput}/${config.PackageFilter} --skip-duplicate --source $source --api-key $apiKey"
     }
 }
 
