@@ -93,7 +93,7 @@ def _loadConfiguration()
 def _doesMatch(matcher)
 {
     def isPullRequest = env.CHANGE_ID != null;
-    def branchName = isPullRequest ? env.BRANCH_NAME : env.CHANGE_BRANCH;
+    def branchName = !isPullRequest ? env.BRANCH_NAME : env.CHANGE_BRANCH;
 
     if(matcher.containsKey('Branch') && !(branchName ==~ matcher.Branch))
         return false;
