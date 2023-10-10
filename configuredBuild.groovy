@@ -59,7 +59,7 @@ def _loadConfiguration()
         def iterator = buildConfig.entrySet().iterator();
 
         def kv = iterator.next();
-        if(kv.key == 'Matcher')
+        while (['Matcher', 'Skips'].contains(kv.key))
             kv = iterator.next();
 
         def type = kv.key;
@@ -72,6 +72,10 @@ def _loadConfiguration()
         if(!doesMatch)
             continue;
 
+        def skips = buildConfig.containsKey('Skips')
+            ? buildConfig.Skips
+            : [];
+
         if(!builders.containsKey(type))
             builders[type] = _loadBuilder(type);
 
@@ -79,6 +83,7 @@ def _loadConfiguration()
             type: type,
             data: data,
             builder: builders[type],
+            skips: skips,
         ]);
     }
 
@@ -116,6 +121,10 @@ def _runSingle(stageName, buildConfig)
         return;
 
     echo "[$stageName] ${buildConfig.type}: ${buildConfig.data}";
+    if (buildConfig.skips.contains(stageName)) {
+        echo "SKIPPED"
+        return;
+    }
 
     def preparedConfig = buildConfig.builder.b.createConfig();
     preparedConfig.putAll(buildConfig.data);
