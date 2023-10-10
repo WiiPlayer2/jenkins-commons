@@ -92,10 +92,16 @@ def _loadConfiguration()
 
 def _doesMatch(matcher)
 {
-    if(matcher.containsKey('Branch') && !((env.BRANCH_NAME ?: env.CHANGE_BRANCH) ==~ matcher.Branch))
+    def isPullRequest = env.CHANGE_ID != null;
+    def branchName = isPullRequest ? env.BRANCH_NAME : env.CHANGE_BRANCH;
+
+    if(matcher.containsKey('Branch') && !(branchName ==~ matcher.Branch))
         return false;
 
-    if(matcher.containsKey('PullRequest') && (env.CHANGE_ID != null) != matcher.PullRequest)
+    if(matcher.containsKey('PullRequest') && isPullRequest != matcher.PullRequest)
+        return false;
+
+    if(matcher.containsKey('TargetBranch') && !(env.CHANGE_TARGET ==~ matcher.TargetBranch))
         return false;
 
     return true;
